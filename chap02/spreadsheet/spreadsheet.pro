@@ -17,10 +17,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    finddialog.cpp \
+    spreadsheet.cpp \
+    cell.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    finddialog.h \
+    spreadsheet.h \
+    cell.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

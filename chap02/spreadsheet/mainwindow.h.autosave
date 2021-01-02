@@ -6,7 +6,11 @@
 #include <QAction>
 #include <QLabel>
 #include <QMenu>
+#include <QMenuBar>
+#include <QToolBar>
+#include <QStatusBar>
 #include "finddialog.h"
+#include "spreadsheet.h"
 
 
 
@@ -49,8 +53,8 @@ private:
     void updateRecentFileActions();
     QString strippedName(const QString & fullFilename);
 
+    Spreadsheet * spreadsheet;
     FindDialog * findDialog;
-
     QLabel * locationLabel;
     QLabel * formulaLabel;
     QStringList recentFiles;
