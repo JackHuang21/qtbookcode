@@ -178,7 +178,7 @@ QVariant Cell::evalFactor(const QString &str, int &pos) const
             if (c)
                 result = c->value();
             else
-                result = 0.0
+                result = 0.0;
         }
         else {
             bool Ok;

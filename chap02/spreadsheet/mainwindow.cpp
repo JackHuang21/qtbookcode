@@ -3,11 +3,22 @@
 #include <QIcon>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QFileInfo>
+#include <QSettings>
+#include <QDebug>
+#include "gotocelldialog.h"
+#include "sortdialog.h"
+
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    spreadsheet = new Spreadsheet;
+    setCentralWidget(spreadsheet);
+
     createActions();
+    createMenus();
     createContextMenu();
     createToolBars();
     createStatusBars();
@@ -247,7 +258,7 @@ void MainWindow::open()
     if (okToContinue())
     {
         QString fileName = QFileDialog::getOpenFileName(this,
-                                                        tr("Open Spreadsheet"),
+                                                        tr("Open Spreadsheet", "."),
                                                         tr("Spreadsheet files (*.sp"));
         if (!fileName.isEmpty())
             loadFile(fileName);
@@ -287,6 +298,27 @@ bool MainWindow::saveFile(const QString &filename)
     return true;
 }
 
+bool MainWindow::saveas()
+{
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                                    tr("Save Spreadsheet"), ".",
+                                                    tr("Spreadsheet file (*.sp)"));
+    if (fileName.isEmpty())
+        return false;
+    return saveFile(fileName);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (okToContinue())
+    {
+        writeSettings();
+        event->accept();
+    }
+    else
+        event->ignore();
+}
+
 bool MainWindow::okToContinue()
 {
     if (isWindowModified())
@@ -302,4 +334,147 @@ bool MainWindow::okToContinue()
     }
     return true;
 }
+
+
+void MainWindow::setCurrentFile(const QString &filename)
+{
+    curFile = filename;
+    setWindowModified(false);
+    QString shownName = tr("Untitled");
+    if (!curFile.isEmpty())
+    {
+        shownName = strippedName(curFile);
+        recentFiles.removeAll(curFile);
+        recentFiles.prepend(curFile);
+        updateRecentFileActions();
+    }
+    setWindowTitle(tr("%1[*] - %2").arg(shownName)
+                   .arg(tr("Spreadsheet")));
+}
+
+QString MainWindow::strippedName(const QString &fullFilename)
+{
+    return QFileInfo(fullFilename).fileName();
+}
+
+void MainWindow::updateRecentFileActions()
+{
+    QMutableStringListIterator i(recentFiles);
+
+    while (i.hasNext())
+    {
+        if (!QFile::exists(i.next()))
+            i.remove();
+    }
+
+    for (int j = 0; j < MaxRecentFile; ++j)
+    {
+        if (j < recentFiles.count())
+        {
+            QString text = tr("&%1 %2").arg(j + 1)
+                    .arg(strippedName(recentFiles[j]));
+            recentFileActions[j]->setText(text);
+            recentFileActions[j]->setData(recentFiles[j]);
+            recentFileActions[j]->setVisible(true);
+        }
+        else
+            recentFileActions[j]->setVisible(false);
+    }
+    separtorAction->setVisible(!recentFiles.isEmpty());
+}
+
+void MainWindow::openRecentFile()
+{
+    if (okToContinue())
+    {
+        QAction * action = qobject_cast<QAction *>(sender());
+        if (action)
+            loadFile(action->data().toString());
+    }
+}
+
+void MainWindow::find()
+{
+    if (!findDialog)
+    {
+        findDialog = new FindDialog(this);
+        connect(findDialog, &FindDialog::findNext, spreadsheet, &Spreadsheet::findNext);
+        connect(findDialog, &FindDialog::findPrevious, spreadsheet, &Spreadsheet::findPrevious);
+    }
+    findDialog->show();
+    findDialog->raise();
+    findDialog->activateWindow();
+}
+
+void MainWindow::goToCell()
+{
+    GoToCellDialog dialog(this);
+    if (dialog.exec())
+    {
+        QString str = dialog.lineEdit->text().toUpper();
+        spreadsheet->setCurrentCell(str.mid(1).toInt() - 1, str[0].unicode() - 'A');
+    }
+}
+
+void MainWindow::sort()
+{
+    SortDialog dialog(this);
+    QTableWidgetSelectionRange range = spreadsheet->selectedRange();
+    dialog.setColumnRange('A' + range.leftColumn(), 'A' + range.rightColumn());
+    if (dialog.exec())
+    {
+        SpreadsheetCompare compare;
+        compare.keys[0] =
+                dialog.primaryColumnCombo->currentIndex();
+        compare.keys[1] =
+                dialog.secondaryColumnCombo->currentIndex() - 1;
+        compare.keys[2] =
+                dialog.tertiaryColumnCombo->currentIndex() - 1;
+        compare.ascending[0] =
+                (dialog.primaryOrderCombo->currentIndex() == 0);
+        compare.ascending[1] =
+                (dialog.secondaryOrderCombo->currentIndex() == 0);
+        compare.ascending[2] =
+                (dialog.tertiaryOrderCombo->currentIndex() == 0);
+        spreadsheet->sort(compare);
+    }
+}
+void MainWindow::about()
+{
+    QMessageBox::about(this, tr("About Spreadsheet"),
+                       tr("<h2>Spreadsheet 1.1</h2>"
+                          "<p>Copyright &copy; 2021 Software Inc."
+                          "<p>Spreasheet is a small application that"
+                          "demonstrates QAction, QMainWindow, QMenubar,"
+                          "QStatusBar, QTableWidget, QToolBar, and many other "
+                          "Qt classes."));
+}
+
+void MainWindow::readSettings()
+{
+    QSettings settings("Software Inc.", "Spreadsheet");
+    restoreGeometry(settings.value("geometry").toByteArray());
+
+    recentFiles = settings.value("recentFiles").toStringList();
+    updateRecentFileActions();
+
+    bool showGrid = settings.value("showGrid", true).toBool();
+
+    showGridAction->setChecked(showGrid);
+
+
+
+    bool autoRecalc = settings.value("autoRecalc", true).toBool();
+    autoRecalcAction->setChecked(autoRecalc);
+}
+
+void MainWindow::writeSettings()
+{
+    QSettings settings("Software Inc.", "Spreadsheet");
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("recentFiles", recentFiles);
+    settings.setValue("showGrid", showGridAction->isChecked());
+    settings.setValue("autoRecalc", autoRecalcAction->isChecked());
+}
+
 

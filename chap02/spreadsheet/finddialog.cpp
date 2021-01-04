@@ -60,8 +60,3 @@ void FindDialog::enableFindButton(const QString &text)
 {
     findButton->setEnabled(!text.isEmpty());
 }
-
-FindDialog::~FindDialog()
-{
-}
-

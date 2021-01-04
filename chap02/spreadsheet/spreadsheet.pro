@@ -1,5 +1,4 @@
 QT       += core gui
-
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
@@ -20,18 +19,25 @@ SOURCES += \
     mainwindow.cpp \
     finddialog.cpp \
     spreadsheet.cpp \
-    cell.cpp
+    cell.cpp \
+    gotocelldialog.cpp \
+    sortdialog.cpp
 
 HEADERS += \
     mainwindow.h \
     finddialog.h \
     spreadsheet.h \
-    cell.h
+    cell.h \
+    gotocelldialog.h \
+    sortdialog.h
 
 # Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
+target.path = /home/pi/qt5
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
     spreadsheet.qrc
+
+FORMS += \
+    gotocell.ui \
+    sort_dialog.ui

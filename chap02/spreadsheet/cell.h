@@ -20,7 +20,7 @@ private:
     QVariant value() const;
     QVariant evalExpression(const QString &str, int &ops) const;
     QVariant evalTerm(const QString &str, int &pos) const;
-    QVariant evalFactor(const QString &str, int &ops) const;
+    QVariant evalFactor(const QString &str, int &pos) const;
 
     mutable QVariant cachedValue;
     mutable bool cacheIsDirty;
