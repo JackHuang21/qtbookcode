@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     readSettings();
     findDialog = nullptr;
 
-    setWindowIcon(QIcon(":/images/icon"));
+    setWindowIcon(QIcon(":/image/icon"));
     setCurrentFile("");
 }
 
@@ -258,7 +258,7 @@ void MainWindow::open()
     if (okToContinue())
     {
         QString fileName = QFileDialog::getOpenFileName(this,
-                                                        tr("Open Spreadsheet", "."),
+                                                        tr("Open Spreadsheet"), ".",
                                                         tr("Spreadsheet files (*.sp"));
         if (!fileName.isEmpty())
             loadFile(fileName);

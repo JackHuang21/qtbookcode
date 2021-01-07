@@ -80,7 +80,7 @@ void Spreadsheet::somethingChanged()
 {
     if (autoRecalc)
         recalculate();
-    emit modified();
+    emit modified();d
 }
 
 bool Spreadsheet::writeFile(const QString &filename)

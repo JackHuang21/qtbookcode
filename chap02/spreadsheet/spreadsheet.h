@@ -33,13 +33,11 @@ public slots:
     void findNext(const QString & str, Qt::CaseSensitivity cs);
     void findPrevious(const QString & str, Qt::CaseSensitivity cs);
 
-
 signals:
     void modified();
 
 private slots:
     void somethingChanged();
-
 
 private:
     enum { MagicNumber = 0x7F51C883, RowCount = 999, ColumnCount = 26 };
