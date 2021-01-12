@@ -1,3 +1,6 @@
+#ifndef ICONEDITORPLUGIN_H_
+#define ICONEDITORPLUGIN_H_
+
 #include <QDesignerCustomWidgetInterface>
 
 class IconEditorPlugin : public QObject,
@@ -19,3 +22,4 @@ public:
     QWidget * createWidget(QWidget * parent);
 };
 
+#endif

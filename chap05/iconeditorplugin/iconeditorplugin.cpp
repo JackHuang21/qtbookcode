@@ -1,3 +1,5 @@
+#include <QtPlugin>
+#include "iconeditor.h"
 #include "iconeditorplugin.h"
 
 IconEditorPlugin::IconEditorPlugin(QObject * parent)
@@ -22,7 +24,7 @@ QString IconEditorPlugin::group() const
 
 QIcon IconEditorPlugin::icon() const
 {
-    return QIcon(":/image/iconeditor.png");
+    return QIcon(":/image/icon.png");
 }
 
 QString IconEditorPlugin::tooTip() const
@@ -46,3 +48,6 @@ QWidget * IconEditorPlugin::createWidget(QWidget * parent)
 {
     return new IconEditor(parent);
 }
+
+Q_EXPORT_PLUGIN2(iconeditorplugin, IconEditorPlugin)
+
