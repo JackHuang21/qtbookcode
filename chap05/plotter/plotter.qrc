@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/images">
+        <file alias="zoomin">images/zoomin.png</file>
+        <file alias="zoomout">images/zoomout.png</file>
+    </qresource>
+    <qresource prefix="/files">
+        <file alias="curveData">in1.txt</file>
+    </qresource>
+</RCC>

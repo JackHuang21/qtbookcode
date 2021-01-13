@@ -37,7 +37,7 @@ protected:
 
 private:
     void updateRubberBandRegion();
-    void refresfPixmap();
+    void refreshPixmap();
     void drawGrid(QPainter * painter);
     void drawCurves(QPainter * painter);
 
