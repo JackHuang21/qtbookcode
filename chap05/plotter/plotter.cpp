@@ -81,7 +81,7 @@ QSize Plotter::sizeHint() const
     return QSize(12 * Margin, 8 * Margin);
 }
 
-void Plotter::paintEvent(QPaintEvent * event)
+void Plotter::paintEvent(QPaintEvent * /* event */)
 {
     QStylePainter painter(this);
     painter.drawPixmap(0, 0, pixmap);
@@ -100,7 +100,7 @@ void Plotter::paintEvent(QPaintEvent * event)
     }
 }
 
-void Plotter::resizeEvent(QResizeEvent *event)
+void Plotter::resizeEvent(QResizeEvent * /* event */)
 {
     int x = width() - (zoomInButton->width() + zoomOutButton->width() + 10);
     zoomInButton->move(x, 5);
@@ -148,6 +148,7 @@ void Plotter::mouseReleaseEvent(QMouseEvent *event)
         rect.translate(-Margin, -Margin);
 
         PlotSettings prevSettings = zoomStack[curZoom];
+        // create a plot setting and save it
         PlotSettings settings;
         double dx = prevSettings.spanX() / (width() - 2 * Margin);
         double dy = prevSettings.spanY() / (height() - 2 * Margin);
@@ -157,7 +158,6 @@ void Plotter::mouseReleaseEvent(QMouseEvent *event)
         settings.maxY = prevSettings.maxY - dy * rect.top();
         settings.adjust();
 
-        zoomStack.resize(curZoom + 1);
         zoomStack.append(settings);
         zoomIn();
     }
@@ -247,9 +247,7 @@ void Plotter::drawGrid(QPainter *painter)
         int x = rect.left() + (i * (rect.width() - 1) / settings.numXTicks);
         double label = settings.minX + (i * settings.spanX() / settings.numXTicks);
         painter->setPen(quiteDark);
-        painter->drawLine(x, rect.top(), x, rect.bottom());
-        painter->setPen(light);
-        painter->drawLine(x, rect.bottom(), x, rect.bottom() + 5);
+        painter->drawLine(x, rect.top(), x, rect.bottom() + 5);
         painter->drawText(x - 50, rect.bottom() + 5, 100, 20,
                           Qt::AlignHCenter | Qt::AlignTop,
                           QString::number(label));
@@ -260,9 +258,7 @@ void Plotter::drawGrid(QPainter *painter)
         int y = rect.bottom() - (j * (rect.height() - 1) / settings.numYTicks);
         double label = settings.minY + (j * settings.spanY() / settings.numYTicks);
         painter->setPen(quiteDark);
-        painter->drawLine(rect.left(), y, rect.right(), y);
-        painter->setPen(light);
-        painter->drawLine(rect.left() - 5, y, rect.left(), y);
+        painter->drawLine(rect.left() - 5, y, rect.right(), y);
         painter->drawText(rect.left() - Margin, y - 10, Margin - 5, 20,
                           Qt::AlignRight | Qt::AlignVCenter,
                           QString::number(label));
@@ -328,6 +324,7 @@ void PlotSettings::scroll(int dx, int dy)
 
 void PlotSettings::adjust()
 {
+    qDebug() << "axis adjust...";
     adjustAxis(minX, maxX, numXTicks);
     adjustAxis(minY, maxY, numYTicks);
 }
