@@ -8,6 +8,7 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QToolBar>
+#include "editor.h"
 
 
 class MainWindow : public QMainWindow
@@ -43,7 +44,8 @@ private:
     void createMenus();
     void createToolbars();
     void createStatusbars();
-
+    void addEditor(Editor * editor);
+    Editor * activeEditor();
     QMdiArea * mdiArea;
     QLabel * readyLbl;
     QWidgetList windows;

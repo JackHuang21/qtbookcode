@@ -13,16 +13,16 @@ class Editor : public QTextEdit
 {
     Q_OBJECT
 public:
-    Editor();
+    Editor(QWidget * parent  = nullptr);
 
     void newFile();
-    void save();
-    void saveas();
+    bool save();
+    bool saveas();
     QSize sizeHint() const;
     QAction * windowMenuAction() const { return action; }
-    static Editor * open(QWidget * parent = 0);
+    static Editor * open(QWidget * parent = nullptr);
     static Editor * openFile(const QString & fileName,
-                             QWidget * parent = 0);
+                             QWidget * parent = nullptr);
 
 protected:
     void closeEvent(QCloseEvent * event);
@@ -35,7 +35,7 @@ private:
     bool saveFile(const QString & fileName);
     void setCurrentFile(const QString & fileName);
     bool readFile(const QString & fileName);
-    bool writeFile(const QSrting & fileName);
+    bool writeFile(const QString & fileName);
     QString strippedName(const QString & fileName);
 
     QString curFile;
